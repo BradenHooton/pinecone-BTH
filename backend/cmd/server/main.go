@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/BradenHooton/pinecone-api/internal/auth"
 	"github.com/BradenHooton/pinecone-api/internal/config"
 	"github.com/BradenHooton/pinecone-api/internal/middleware"
 	"github.com/go-chi/chi/v5"
@@ -63,6 +64,15 @@ func main() {
 	}
 	logger.Info("Database connection established")
 
+	// Initialize repositories
+	authRepo := auth.NewPostgresRepository(dbpool)
+
+	// Initialize services
+	authService := auth.NewService(authRepo, cfg.JWTSecret, cfg.JWTExpiryHours)
+
+	// Initialize handlers
+	authHandler := auth.NewHandler(authService)
+
 	// Create router
 	r := chi.NewRouter()
 
@@ -84,21 +94,15 @@ func main() {
 	r.Route("/api/v1", func(r chi.Router) {
 		// Public routes (no auth required)
 		r.Group(func(r chi.Router) {
-			r.Post("/auth/register", func(w http.ResponseWriter, r *http.Request) {
-				w.Write([]byte("Register endpoint - TODO"))
-			})
-			r.Post("/auth/login", func(w http.ResponseWriter, r *http.Request) {
-				w.Write([]byte("Login endpoint - TODO"))
-			})
+			r.Post("/auth/register", authHandler.HandleRegister)
+			r.Post("/auth/login", authHandler.HandleLogin)
 		})
 
 		// Protected routes (auth required)
 		r.Group(func(r chi.Router) {
 			r.Use(middleware.Auth(cfg.JWTSecret))
 
-			r.Post("/auth/logout", func(w http.ResponseWriter, r *http.Request) {
-				w.Write([]byte("Logout endpoint - TODO"))
-			})
+			r.Post("/auth/logout", authHandler.HandleLogout)
 
 			// Recipe routes
 			r.Route("/recipes", func(r chi.Router) {

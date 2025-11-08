@@ -1,5 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { useState } from 'react'
+import { RouterProvider, createRouter, createRootRoute, createRoute, Link, Outlet } from '@tanstack/react-router'
+import { RegisterForm } from './components/auth/RegisterForm'
+import { LoginForm } from './components/auth/LoginForm'
+import { ProtectedRoute } from './components/auth/ProtectedRoute'
+import { useAuth } from './hooks/useAuth'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -10,35 +14,139 @@ const queryClient = new QueryClient({
   },
 })
 
-function App() {
-  const [isLoading, setIsLoading] = useState(false)
+// Root route
+const rootRoute = createRootRoute({
+  component: RootComponent,
+})
 
+function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="app">
-        <header className="header">
-          <h1>Pinecone</h1>
-          <p>Recipe Management & Meal Planning</p>
-        </header>
-
-        <main className="main">
-          <div className="container">
-            <h2>Welcome to Pinecone</h2>
-            <p>Your household recipe management system is being built...</p>
-
-            {isLoading ? (
-              <p>Loading...</p>
-            ) : (
-              <div>
-                <p>Status: Development in progress</p>
-                <p>Epic 1: Foundation & Infrastructure ✓</p>
-              </div>
-            )}
-          </div>
-        </main>
+        <Outlet />
       </div>
     </QueryClientProvider>
   )
+}
+
+// Home route (protected)
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: HomePage,
+})
+
+function HomePage() {
+  const { user, logout, isLoading } = useAuth()
+
+  return (
+    <ProtectedRoute>
+      <header className="header">
+        <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h1>Pinecone</h1>
+            <p>Recipe Management & Meal Planning</p>
+          </div>
+          {user && (
+            <div>
+              <span style={{ marginRight: '1rem', color: 'white' }}>Welcome, {user.name}!</span>
+              <button
+                onClick={() => logout()}
+                disabled={isLoading}
+                style={{
+                  padding: '0.5rem 1rem',
+                  backgroundColor: 'white',
+                  color: 'var(--color-primary)',
+                  border: 'none',
+                  borderRadius: 'var(--radius-base)',
+                  cursor: 'pointer',
+                  fontWeight: 600
+                }}
+              >
+                {isLoading ? 'Logging out...' : 'Logout'}
+              </button>
+            </div>
+          )}
+        </div>
+      </header>
+
+      <main className="main">
+        <div className="container">
+          <h2>Welcome to Pinecone</h2>
+          <p>Your household recipe management system</p>
+
+          <div style={{ marginTop: '2rem' }}>
+            <h3>Progress Status</h3>
+            <ul>
+              <li>✅ Epic 1: Foundation & Infrastructure</li>
+              <li>🚧 Epic 2: User Authentication (In Progress)</li>
+              <li>⏳ Epic 3: Recipe Management (Coming Soon)</li>
+            </ul>
+          </div>
+        </div>
+      </main>
+    </ProtectedRoute>
+  )
+}
+
+// Register route
+const registerRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/register',
+  component: RegisterPage,
+})
+
+function RegisterPage() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-background)' }}>
+      <div style={{ padding: '2rem 1rem', textAlign: 'center' }}>
+        <Link to="/">
+          <h1 style={{ color: 'var(--color-primary)' }}>Pinecone</h1>
+        </Link>
+      </div>
+      <RegisterForm />
+    </div>
+  )
+}
+
+// Login route
+const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/login',
+  component: LoginPage,
+})
+
+function LoginPage() {
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--color-background)' }}>
+      <div style={{ padding: '2rem 1rem', textAlign: 'center' }}>
+        <Link to="/">
+          <h1 style={{ color: 'var(--color-primary)' }}>Pinecone</h1>
+        </Link>
+      </div>
+      <LoginForm />
+    </div>
+  )
+}
+
+// Create router
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  registerRoute,
+  loginRoute,
+])
+
+const router = createRouter({ routeTree })
+
+// Declare router type for TypeScript
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
+
+function App() {
+  return <RouterProvider router={router} />
 }
 
 export default App
