@@ -1,0 +1,41 @@
+departments:
+  - id: produce
+    name: Produce
+    description: Fresh fruits and vegetables
+    order: 1
+  - id: meat
+    name: Meat & Poultry
+    description: Fresh and packaged meats
+    order: 2
+  - id: seafood
+    name: Seafood
+    description: Fresh and frozen seafood
+    order: 3
+  - id: dairy
+    name: Dairy & Eggs
+    description: Milk, cheese, yogurt, eggs
+    order: 4
+  - id: bakery
+    name: Bakery
+    description: Bread, buns, pastries
+    order: 5
+  - id: frozen
+    name: Frozen Foods
+    description: Frozen meals, vegetables, desserts
+    order: 6
+  - id: pantry
+    name: Pantry
+    description: Pasta, rice, canned goods
+    order: 7
+  - id: spices
+    name: Spices & Condiments
+    description: Herbs, spices, sauces, condiments
+    order: 8
+  - id: beverages
+    name: Beverages
+    description: Drinks, juices, coffee, tea
+    order: 9
+  - id: other
+    name: Other
+    description: Miscellaneous items
+    order: 10
