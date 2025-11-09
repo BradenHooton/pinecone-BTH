@@ -135,6 +135,24 @@ export interface RecipeSearchParams {
   offset?: number
 }
 
+export interface NutritionSearchResult {
+  fdc_id: string
+  description: string
+  data_type: string
+  calories?: number
+  protein_g?: number
+  carbs_g?: number
+  fiber_g?: number
+  fat_g?: number
+}
+
+export interface NutritionSearchResponse {
+  data: NutritionSearchResult[]
+  meta: {
+    total: number
+  }
+}
+
 class ApiClient {
   private baseURL: string
 
@@ -242,6 +260,12 @@ class ApiClient {
     }
 
     return response.json()
+  }
+
+  // Nutrition endpoints
+  async searchNutrition(query: string): Promise<NutritionSearchResponse> {
+    const encodedQuery = encodeURIComponent(query)
+    return this.request<NutritionSearchResponse>(`/nutrition/search?query=${encodedQuery}`)
   }
 }
 

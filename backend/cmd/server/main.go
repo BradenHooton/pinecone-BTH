@@ -14,6 +14,7 @@ import (
 	"github.com/BradenHooton/pinecone-api/internal/auth"
 	"github.com/BradenHooton/pinecone-api/internal/config"
 	"github.com/BradenHooton/pinecone-api/internal/middleware"
+	"github.com/BradenHooton/pinecone-api/internal/nutrition"
 	"github.com/BradenHooton/pinecone-api/internal/recipe"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
@@ -68,14 +69,20 @@ func main() {
 	// Initialize repositories
 	authRepo := auth.NewPostgresRepository(dbpool)
 	recipeRepo := recipe.NewPostgresRepository(dbpool)
+	nutritionRepo := nutrition.NewPostgresRepository(dbpool)
+
+	// Initialize USDA client (stub for now)
+	usdaClient := nutrition.NewStubUSDAClient()
 
 	// Initialize services
 	authService := auth.NewService(authRepo, cfg.JWTSecret, cfg.JWTExpiryHours)
 	recipeService := recipe.NewService(recipeRepo)
+	nutritionService := nutrition.NewService(nutritionRepo, usdaClient)
 
 	// Initialize handlers
 	authHandler := auth.NewHandler(authService)
 	recipeHandler := recipe.NewHandler(recipeService, cfg.UploadDir)
+	nutritionHandler := nutrition.NewHandler(nutritionService)
 
 	// Create router
 	r := chi.NewRouter()
@@ -117,6 +124,9 @@ func main() {
 				r.Put("/{id}", recipeHandler.HandleUpdate)
 				r.Delete("/{id}", recipeHandler.HandleDelete)
 			})
+
+			// Nutrition routes
+			r.Get("/nutrition/search", nutritionHandler.HandleSearch)
 		})
 	})
 
