@@ -9,6 +9,7 @@ import { RecipeDetailPage } from './pages/RecipeDetailPage'
 import { RecipeFormPage } from './pages/RecipeFormPage'
 import { MealPlanPage } from './pages/MealPlanPage'
 import { GroceryListPage } from './pages/GroceryListPage'
+import { MenuPage } from './pages/MenuPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -240,6 +241,21 @@ function GroceryListPageWrapper() {
   )
 }
 
+// Menu recommendation route
+const menuRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/menu',
+  component: MenuPageWrapper,
+})
+
+function MenuPageWrapper() {
+  return (
+    <ProtectedRoute>
+      <MenuPage />
+    </ProtectedRoute>
+  )
+}
+
 // Create router
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -251,6 +267,7 @@ const routeTree = rootRoute.addChildren([
   recipeEditRoute,
   mealPlanRoute,
   groceryListRoute,
+  menuRoute,
 ])
 
 const router = createRouter({ routeTree })

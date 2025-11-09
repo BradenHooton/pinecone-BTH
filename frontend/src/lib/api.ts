@@ -261,6 +261,25 @@ export interface GroceryListListResponse {
   }
 }
 
+export interface RecommendRecipesRequest {
+  ingredients: string[]
+}
+
+export interface RecipeRecommendation {
+  recipe: Recipe
+  match_score: number
+  matched_ingredients: string[]
+  missing_ingredients: string[]
+}
+
+export interface RecommendRecipesResponse {
+  data: RecipeRecommendation[]
+  meta: {
+    provided_ingredients: string[]
+    total_recipes_found: number
+  }
+}
+
 class ApiClient {
   private baseURL: string
 
@@ -431,6 +450,14 @@ class ApiClient {
   async updateItemStatus(itemId: string, data: UpdateItemStatusRequest): Promise<void> {
     await this.request(`/grocery-lists/items/${itemId}`, {
       method: 'PATCH',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // Menu recommendation endpoints
+  async recommendRecipes(data: RecommendRecipesRequest): Promise<RecommendRecipesResponse> {
+    return this.request<RecommendRecipesResponse>('/menu/recommend', {
+      method: 'POST',
       body: JSON.stringify(data),
     })
   }
