@@ -7,6 +7,7 @@ import { useAuth } from './hooks/useAuth'
 import { RecipeListPage } from './pages/RecipeListPage'
 import { RecipeDetailPage } from './pages/RecipeDetailPage'
 import { RecipeFormPage } from './pages/RecipeFormPage'
+import { MealPlanPage } from './pages/MealPlanPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -208,6 +209,21 @@ function RecipeEditPage() {
   )
 }
 
+// Meal plan route
+const mealPlanRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/mealplan',
+  component: MealPlanPageWrapper,
+})
+
+function MealPlanPageWrapper() {
+  return (
+    <ProtectedRoute>
+      <MealPlanPage />
+    </ProtectedRoute>
+  )
+}
+
 // Create router
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -217,6 +233,7 @@ const routeTree = rootRoute.addChildren([
   recipeNewRoute,
   recipeDetailRoute,
   recipeEditRoute,
+  mealPlanRoute,
 ])
 
 const router = createRouter({ routeTree })

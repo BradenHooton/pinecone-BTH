@@ -13,6 +13,7 @@ import (
 
 	"github.com/BradenHooton/pinecone-api/internal/auth"
 	"github.com/BradenHooton/pinecone-api/internal/config"
+	"github.com/BradenHooton/pinecone-api/internal/mealplan"
 	"github.com/BradenHooton/pinecone-api/internal/middleware"
 	"github.com/BradenHooton/pinecone-api/internal/nutrition"
 	"github.com/BradenHooton/pinecone-api/internal/recipe"
@@ -70,6 +71,7 @@ func main() {
 	authRepo := auth.NewPostgresRepository(dbpool)
 	recipeRepo := recipe.NewPostgresRepository(dbpool)
 	nutritionRepo := nutrition.NewPostgresRepository(dbpool)
+	mealPlanRepo := mealplan.NewPostgresRepository(dbpool)
 
 	// Initialize USDA client (stub for now)
 	usdaClient := nutrition.NewStubUSDAClient()
@@ -78,11 +80,13 @@ func main() {
 	authService := auth.NewService(authRepo, cfg.JWTSecret, cfg.JWTExpiryHours)
 	recipeService := recipe.NewService(recipeRepo)
 	nutritionService := nutrition.NewService(nutritionRepo, usdaClient)
+	mealPlanService := mealplan.NewService(mealPlanRepo)
 
 	// Initialize handlers
 	authHandler := auth.NewHandler(authService)
 	recipeHandler := recipe.NewHandler(recipeService, cfg.UploadDir)
 	nutritionHandler := nutrition.NewHandler(nutritionService)
+	mealPlanHandler := mealplan.NewHandler(mealPlanService)
 
 	// Create router
 	r := chi.NewRouter()
@@ -127,6 +131,13 @@ func main() {
 
 			// Nutrition routes
 			r.Get("/nutrition/search", nutritionHandler.HandleSearch)
+
+			// Meal plan routes
+			r.Route("/meal-plans", func(r chi.Router) {
+				r.Get("/", mealPlanHandler.HandleGetByDateRange)
+				r.Get("/date", mealPlanHandler.HandleGetByDate)
+				r.Put("/date", mealPlanHandler.HandleUpdate)
+			})
 		})
 	})
 

@@ -153,6 +153,50 @@ export interface NutritionSearchResponse {
   }
 }
 
+export type MealType = 'breakfast' | 'lunch' | 'snack' | 'dinner' | 'dessert'
+
+export interface MealPlanRecipe {
+  id: string
+  meal_plan_id: string
+  meal_type: MealType
+  recipe_id?: string
+  recipe?: Recipe
+  servings?: number
+  out_of_kitchen: boolean
+  order_index: number
+}
+
+export interface MealPlan {
+  id: string
+  plan_date: string
+  created_at: string
+  updated_at: string
+  meals: MealPlanRecipe[]
+}
+
+export interface CreateMealPlanRecipeRequest {
+  meal_type: MealType
+  recipe_id?: string
+  servings?: number
+  out_of_kitchen: boolean
+}
+
+export interface UpdateMealPlanRequest {
+  meals: CreateMealPlanRecipeRequest[]
+}
+
+export interface MealPlanResponse {
+  data: MealPlan
+}
+
+export interface MealPlanListResponse {
+  data: MealPlan[]
+  meta: {
+    start_date: string
+    end_date: string
+  }
+}
+
 class ApiClient {
   private baseURL: string
 
@@ -266,6 +310,22 @@ class ApiClient {
   async searchNutrition(query: string): Promise<NutritionSearchResponse> {
     const encodedQuery = encodeURIComponent(query)
     return this.request<NutritionSearchResponse>(`/nutrition/search?query=${encodedQuery}`)
+  }
+
+  // Meal plan endpoints
+  async getMealPlanByDate(date: string): Promise<MealPlanResponse> {
+    return this.request<MealPlanResponse>(`/meal-plans/date?date=${date}`)
+  }
+
+  async getMealPlansByDateRange(startDate: string, endDate: string): Promise<MealPlanListResponse> {
+    return this.request<MealPlanListResponse>(`/meal-plans?start_date=${startDate}&end_date=${endDate}`)
+  }
+
+  async updateMealPlan(date: string, data: UpdateMealPlanRequest): Promise<MealPlanResponse> {
+    return this.request<MealPlanResponse>(`/meal-plans/date?date=${date}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
   }
 }
 
