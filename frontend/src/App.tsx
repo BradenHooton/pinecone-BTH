@@ -1,9 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { RouterProvider, createRouter, createRootRoute, createRoute, Link, Outlet } from '@tanstack/react-router'
+import { RouterProvider, createRouter, createRootRoute, createRoute, Link, Outlet, useNavigate } from '@tanstack/react-router'
 import { RegisterForm } from './components/auth/RegisterForm'
 import { LoginForm } from './components/auth/LoginForm'
 import { ProtectedRoute } from './components/auth/ProtectedRoute'
 import { useAuth } from './hooks/useAuth'
+import { RecipeListPage } from './pages/RecipeListPage'
+import { RecipeDetailPage } from './pages/RecipeDetailPage'
+import { RecipeFormPage } from './pages/RecipeFormPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -38,6 +41,7 @@ const indexRoute = createRoute({
 
 function HomePage() {
   const { user, logout, isLoading } = useAuth()
+  const navigate = useNavigate()
 
   return (
     <ProtectedRoute>
@@ -76,11 +80,29 @@ function HomePage() {
           <p>Your household recipe management system</p>
 
           <div style={{ marginTop: '2rem' }}>
+            <button
+              onClick={() => navigate({ to: '/recipes' })}
+              style={{
+                padding: '1rem 2rem',
+                backgroundColor: 'var(--color-primary)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 'var(--radius-base)',
+                cursor: 'pointer',
+                fontSize: '1.125rem',
+                fontWeight: 600,
+              }}
+            >
+              View Recipes
+            </button>
+          </div>
+
+          <div style={{ marginTop: '2rem' }}>
             <h3>Progress Status</h3>
             <ul>
               <li>✅ Epic 1: Foundation & Infrastructure</li>
-              <li>🚧 Epic 2: User Authentication (In Progress)</li>
-              <li>⏳ Epic 3: Recipe Management (Coming Soon)</li>
+              <li>✅ Epic 2: User Authentication</li>
+              <li>🚧 Epic 3: Recipe Management (In Progress)</li>
             </ul>
           </div>
         </div>
@@ -129,11 +151,72 @@ function LoginPage() {
   )
 }
 
+// Recipe routes
+const recipesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/recipes',
+  component: RecipesPage,
+})
+
+function RecipesPage() {
+  return (
+    <ProtectedRoute>
+      <RecipeListPage />
+    </ProtectedRoute>
+  )
+}
+
+const recipeNewRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/recipes/new',
+  component: RecipeNewPage,
+})
+
+function RecipeNewPage() {
+  return (
+    <ProtectedRoute>
+      <RecipeFormPage />
+    </ProtectedRoute>
+  )
+}
+
+const recipeDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/recipes/$id',
+  component: RecipeDetailPageWrapper,
+})
+
+function RecipeDetailPageWrapper() {
+  return (
+    <ProtectedRoute>
+      <RecipeDetailPage />
+    </ProtectedRoute>
+  )
+}
+
+const recipeEditRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/recipes/$id/edit',
+  component: RecipeEditPage,
+})
+
+function RecipeEditPage() {
+  return (
+    <ProtectedRoute>
+      <RecipeFormPage />
+    </ProtectedRoute>
+  )
+}
+
 // Create router
 const routeTree = rootRoute.addChildren([
   indexRoute,
   registerRoute,
   loginRoute,
+  recipesRoute,
+  recipeNewRoute,
+  recipeDetailRoute,
+  recipeEditRoute,
 ])
 
 const router = createRouter({ routeTree })

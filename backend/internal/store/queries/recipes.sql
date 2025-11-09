@@ -116,3 +116,21 @@ WHERE r.deleted_at IS NULL
   AND rt.tag_name = $1
 ORDER BY r.created_at DESC
 LIMIT $2 OFFSET $3;
+
+-- name: SearchRecipesByIngredient :many
+SELECT DISTINCT r.* FROM recipes r
+JOIN recipe_ingredients ri ON r.id = ri.recipe_id
+WHERE r.deleted_at IS NULL
+  AND ri.ingredient_name ILIKE '%' || $1 || '%'
+ORDER BY r.created_at DESC
+LIMIT $2 OFFSET $3;
+
+-- name: CountRecipes :one
+SELECT COUNT(*) FROM recipes
+WHERE deleted_at IS NULL;
+
+-- name: GetRecipesByUserID :many
+SELECT * FROM recipes
+WHERE created_by_user_id = $1 AND deleted_at IS NULL
+ORDER BY created_at DESC
+LIMIT $2 OFFSET $3;
