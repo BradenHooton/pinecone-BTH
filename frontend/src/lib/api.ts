@@ -197,6 +197,70 @@ export interface MealPlanListResponse {
   }
 }
 
+export type GroceryDepartment =
+  | 'produce'
+  | 'meat'
+  | 'seafood'
+  | 'dairy'
+  | 'bakery'
+  | 'frozen'
+  | 'pantry'
+  | 'spices'
+  | 'beverages'
+  | 'other'
+
+export type GroceryItemStatus = 'pending' | 'bought' | 'have_on_hand'
+
+export interface GroceryListItem {
+  id: string
+  grocery_list_id: string
+  item_name: string
+  quantity?: number
+  unit?: string
+  department: GroceryDepartment
+  status: GroceryItemStatus
+  is_manual: boolean
+  source_recipe_id?: string
+  source_recipe?: Recipe
+}
+
+export interface GroceryList {
+  id: string
+  created_by_user_id: string
+  start_date: string
+  end_date: string
+  items: GroceryListItem[]
+  created_at: string
+  updated_at: string
+}
+
+export interface CreateGroceryListRequest {
+  start_date: string
+  end_date: string
+}
+
+export interface CreateManualItemRequest {
+  item_name: string
+  quantity?: number
+  unit?: string
+  department?: GroceryDepartment
+}
+
+export interface UpdateItemStatusRequest {
+  status: GroceryItemStatus
+}
+
+export interface GroceryListResponse {
+  data: GroceryList
+}
+
+export interface GroceryListListResponse {
+  data: GroceryList[]
+  meta: {
+    total: number
+  }
+}
+
 class ApiClient {
   private baseURL: string
 
@@ -324,6 +388,49 @@ class ApiClient {
   async updateMealPlan(date: string, data: UpdateMealPlanRequest): Promise<MealPlanResponse> {
     return this.request<MealPlanResponse>(`/meal-plans/date?date=${date}`, {
       method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  // Grocery list endpoints
+  async getGroceryLists(limit?: number, offset?: number): Promise<GroceryListListResponse> {
+    const queryParams = new URLSearchParams()
+    if (limit) queryParams.append('limit', limit.toString())
+    if (offset) queryParams.append('offset', offset.toString())
+
+    const query = queryParams.toString()
+    const endpoint = query ? `/grocery-lists?${query}` : '/grocery-lists'
+
+    return this.request<GroceryListListResponse>(endpoint)
+  }
+
+  async getGroceryListById(id: string): Promise<GroceryListResponse> {
+    return this.request<GroceryListResponse>(`/grocery-lists/${id}`)
+  }
+
+  async createGroceryList(data: CreateGroceryListRequest): Promise<GroceryListResponse> {
+    return this.request<GroceryListResponse>('/grocery-lists', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteGroceryList(id: string): Promise<void> {
+    await this.request(`/grocery-lists/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async addManualItem(listId: string, data: CreateManualItemRequest): Promise<{ data: GroceryListItem }> {
+    return this.request<{ data: GroceryListItem }>(`/grocery-lists/${listId}/items`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateItemStatus(itemId: string, data: UpdateItemStatusRequest): Promise<void> {
+    await this.request(`/grocery-lists/items/${itemId}`, {
+      method: 'PATCH',
       body: JSON.stringify(data),
     })
   }

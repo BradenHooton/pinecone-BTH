@@ -1,0 +1,63 @@
+# Grocery Department Configuration
+# Defines display properties and sorting for grocery list departments
+
+departments:
+  - id: produce
+    name: Produce
+    description: Fresh fruits and vegetables
+    sort_order: 1
+    color: "#4CAF50"
+
+  - id: meat
+    name: Meat & Poultry
+    description: Fresh and packaged meats
+    sort_order: 2
+    color: "#D32F2F"
+
+  - id: seafood
+    name: Seafood
+    description: Fresh and frozen seafood
+    sort_order: 3
+    color: "#2196F3"
+
+  - id: dairy
+    name: Dairy & Eggs
+    description: Milk, cheese, yogurt, eggs
+    sort_order: 4
+    color: "#FFF9C4"
+
+  - id: bakery
+    name: Bakery
+    description: Bread, pastries, baked goods
+    sort_order: 5
+    color: "#D2691E"
+
+  - id: frozen
+    name: Frozen Foods
+    description: Frozen meals, vegetables, desserts
+    sort_order: 6
+    color: "#87CEEB"
+
+  - id: pantry
+    name: Pantry Staples
+    description: Canned goods, pasta, rice, oils
+    sort_order: 7
+    color: "#8D6E63"
+
+  - id: spices
+    name: Spices & Seasonings
+    description: Herbs, spices, condiments
+    sort_order: 8
+    color: "#FF9800"
+
+  - id: beverages
+    name: Beverages
+    description: Drinks, juices, coffee, tea
+    sort_order: 9
+    color: "#9C27B0"
+
+  - id: other
+    name: Other
+    description: Miscellaneous items
+    sort_order: 10
+    color: "#757575"

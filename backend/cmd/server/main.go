@@ -13,6 +13,7 @@ import (
 
 	"github.com/BradenHooton/pinecone-api/internal/auth"
 	"github.com/BradenHooton/pinecone-api/internal/config"
+	"github.com/BradenHooton/pinecone-api/internal/grocerylist"
 	"github.com/BradenHooton/pinecone-api/internal/mealplan"
 	"github.com/BradenHooton/pinecone-api/internal/middleware"
 	"github.com/BradenHooton/pinecone-api/internal/nutrition"
@@ -72,6 +73,7 @@ func main() {
 	recipeRepo := recipe.NewPostgresRepository(dbpool)
 	nutritionRepo := nutrition.NewPostgresRepository(dbpool)
 	mealPlanRepo := mealplan.NewPostgresRepository(dbpool)
+	groceryListRepo := grocerylist.NewPostgresRepository(dbpool)
 
 	// Initialize USDA client (stub for now)
 	usdaClient := nutrition.NewStubUSDAClient()
@@ -81,12 +83,14 @@ func main() {
 	recipeService := recipe.NewService(recipeRepo)
 	nutritionService := nutrition.NewService(nutritionRepo, usdaClient)
 	mealPlanService := mealplan.NewService(mealPlanRepo)
+	groceryListService := grocerylist.NewService(groceryListRepo)
 
 	// Initialize handlers
 	authHandler := auth.NewHandler(authService)
 	recipeHandler := recipe.NewHandler(recipeService, cfg.UploadDir)
 	nutritionHandler := nutrition.NewHandler(nutritionService)
 	mealPlanHandler := mealplan.NewHandler(mealPlanService)
+	groceryListHandler := grocerylist.NewHandler(groceryListService)
 
 	// Create router
 	r := chi.NewRouter()
@@ -137,6 +141,16 @@ func main() {
 				r.Get("/", mealPlanHandler.HandleGetByDateRange)
 				r.Get("/date", mealPlanHandler.HandleGetByDate)
 				r.Put("/date", mealPlanHandler.HandleUpdate)
+			})
+
+			// Grocery list routes
+			r.Route("/grocery-lists", func(r chi.Router) {
+				r.Get("/", groceryListHandler.HandleList)
+				r.Post("/", groceryListHandler.HandleCreate)
+				r.Get("/{id}", groceryListHandler.HandleGetByID)
+				r.Delete("/{id}", groceryListHandler.HandleDelete)
+				r.Post("/{id}/items", groceryListHandler.HandleAddManualItem)
+				r.Patch("/items/{item_id}", groceryListHandler.HandleUpdateItemStatus)
 			})
 		})
 	})

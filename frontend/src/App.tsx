@@ -8,6 +8,7 @@ import { RecipeListPage } from './pages/RecipeListPage'
 import { RecipeDetailPage } from './pages/RecipeDetailPage'
 import { RecipeFormPage } from './pages/RecipeFormPage'
 import { MealPlanPage } from './pages/MealPlanPage'
+import { GroceryListPage } from './pages/GroceryListPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -224,6 +225,21 @@ function MealPlanPageWrapper() {
   )
 }
 
+// Grocery list route
+const groceryListRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/grocery',
+  component: GroceryListPageWrapper,
+})
+
+function GroceryListPageWrapper() {
+  return (
+    <ProtectedRoute>
+      <GroceryListPage />
+    </ProtectedRoute>
+  )
+}
+
 // Create router
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -234,6 +250,7 @@ const routeTree = rootRoute.addChildren([
   recipeDetailRoute,
   recipeEditRoute,
   mealPlanRoute,
+  groceryListRoute,
 ])
 
 const router = createRouter({ routeTree })
