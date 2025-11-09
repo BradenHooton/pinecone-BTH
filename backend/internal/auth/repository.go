@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"time"
 
 	"github.com/BradenHooton/pinecone-api/internal/models"
 	"github.com/google/uuid"

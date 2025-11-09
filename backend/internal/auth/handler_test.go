@@ -127,7 +127,7 @@ func TestHandleRegister_EmailAlreadyExists(t *testing.T) {
 
 	assert.Contains(t, response, "error")
 	errorData := response["error"].(map[string]interface{})
-	assert.Contains(t, errorData["message"], "email already exists")
+	assert.Contains(t, errorData["message"], "Email already exists")
 
 	mockService.AssertExpectations(t)
 }
@@ -229,7 +229,7 @@ func TestHandleLogin_InvalidCredentials(t *testing.T) {
 
 	assert.Contains(t, response, "error")
 	errorData := response["error"].(map[string]interface{})
-	assert.Contains(t, errorData["message"], "invalid credentials")
+	assert.Contains(t, errorData["message"], "Invalid credentials")
 
 	mockService.AssertExpectations(t)
 }
