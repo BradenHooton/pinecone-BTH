@@ -10,6 +10,8 @@ import { RecipeFormPage } from './pages/RecipeFormPage'
 import { MealPlanPage } from './pages/MealPlanPage'
 import { GroceryListPage } from './pages/GroceryListPage'
 import { MenuPage } from './pages/MenuPage'
+import { CookbooksPage } from './pages/CookbooksPage'
+import { CookbookDetailPage } from './pages/CookbookDetailPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -256,6 +258,36 @@ function MenuPageWrapper() {
   )
 }
 
+// Cookbooks route
+const cookbooksRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/cookbooks',
+  component: CookbooksPageWrapper,
+})
+
+function CookbooksPageWrapper() {
+  return (
+    <ProtectedRoute>
+      <CookbooksPage />
+    </ProtectedRoute>
+  )
+}
+
+// Cookbook detail route
+const cookbookDetailRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/cookbooks/$id',
+  component: CookbookDetailPageWrapper,
+})
+
+function CookbookDetailPageWrapper() {
+  return (
+    <ProtectedRoute>
+      <CookbookDetailPage />
+    </ProtectedRoute>
+  )
+}
+
 // Create router
 const routeTree = rootRoute.addChildren([
   indexRoute,
@@ -268,6 +300,8 @@ const routeTree = rootRoute.addChildren([
   mealPlanRoute,
   groceryListRoute,
   menuRoute,
+  cookbooksRoute,
+  cookbookDetailRoute,
 ])
 
 const router = createRouter({ routeTree })

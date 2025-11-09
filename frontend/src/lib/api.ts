@@ -280,6 +280,39 @@ export interface RecommendRecipesResponse {
   }
 }
 
+export interface Cookbook {
+  id: string
+  created_by_user_id: string
+  name: string
+  description?: string
+  recipe_count: number
+  recipes?: Recipe[]
+  created_at: string
+  updated_at: string
+  deleted_at?: string
+}
+
+export interface CreateCookbookRequest {
+  name: string
+  description?: string
+}
+
+export interface UpdateCookbookRequest {
+  name: string
+  description?: string
+}
+
+export interface CookbookResponse {
+  data: Cookbook
+}
+
+export interface CookbookListResponse {
+  data: Cookbook[]
+  meta: {
+    total: number
+  }
+}
+
 class ApiClient {
   private baseURL: string
 
@@ -459,6 +492,54 @@ class ApiClient {
     return this.request<RecommendRecipesResponse>('/menu/recommend', {
       method: 'POST',
       body: JSON.stringify(data),
+    })
+  }
+
+  // Cookbook endpoints
+  async getCookbooks(limit?: number, offset?: number): Promise<CookbookListResponse> {
+    const queryParams = new URLSearchParams()
+    if (limit) queryParams.append('limit', limit.toString())
+    if (offset) queryParams.append('offset', offset.toString())
+
+    const query = queryParams.toString()
+    const endpoint = query ? `/cookbooks?${query}` : '/cookbooks'
+
+    return this.request<CookbookListResponse>(endpoint)
+  }
+
+  async getCookbookById(id: string): Promise<CookbookResponse> {
+    return this.request<CookbookResponse>(`/cookbooks/${id}`)
+  }
+
+  async createCookbook(data: CreateCookbookRequest): Promise<CookbookResponse> {
+    return this.request<CookbookResponse>('/cookbooks', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async updateCookbook(id: string, data: UpdateCookbookRequest): Promise<CookbookResponse> {
+    return this.request<CookbookResponse>(`/cookbooks/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    })
+  }
+
+  async deleteCookbook(id: string): Promise<void> {
+    await this.request(`/cookbooks/${id}`, {
+      method: 'DELETE',
+    })
+  }
+
+  async addRecipeToCookbook(cookbookId: string, recipeId: string): Promise<void> {
+    await this.request(`/cookbooks/${cookbookId}/recipes/${recipeId}`, {
+      method: 'POST',
+    })
+  }
+
+  async removeRecipeFromCookbook(cookbookId: string, recipeId: string): Promise<void> {
+    await this.request(`/cookbooks/${cookbookId}/recipes/${recipeId}`, {
+      method: 'DELETE',
     })
   }
 }
