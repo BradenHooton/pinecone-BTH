@@ -1089,4 +1089,4 @@
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | 2025-11-09 | GhostDev | Initial epic breakdown |
+| 1.0 | 2025-11-09 | Pinecone Team | Initial epic breakdown |

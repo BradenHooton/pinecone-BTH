@@ -1,10 +1,10 @@
 # Technical Design Document (TDD)
 ## Pinecone Recipe Management & Meal Planning System
 
-**Version:** 1.0  
-**Date:** 2025-11-09  
-**Status:** Approved  
-**Author:** GhostDev
+**Version:** 1.0
+**Date:** 2025-11-09
+**Status:** Approved
+**Author:** Pinecone Team
 
 ---
 
@@ -733,4 +733,4 @@ export const spacing = {
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | 2025-11-09 | GhostDev | Initial TDD creation and approval |
+| 1.0 | 2025-11-09 | Pinecone Team | Initial TDD creation and approval |

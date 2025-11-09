@@ -297,4 +297,4 @@ A household lacks a unified system to manage recipes, plan meals for the week, a
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | 2025-11-09 | GhostDev | Initial BRD creation and approval |
+| 1.0 | 2025-11-09 | Pinecone Team | Initial BRD creation and approval |

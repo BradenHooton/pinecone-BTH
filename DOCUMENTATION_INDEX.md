@@ -316,7 +316,7 @@ All documents should be versioned in Git. Include version history table at botto
 ```markdown
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | 2025-11-09 | GhostDev | Initial documentation |
+| 1.0 | 2025-11-09 | Pinecone Team | Initial documentation |
 | 1.1 | 2025-11-15 | Dev Team | Updated after Epic 1 completion |
 ```
 

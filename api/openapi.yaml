@@ -1,0 +1,727 @@
+openapi: 3.0.3
+info:
+  title: Pinecone Recipe Management API
+  description: |
+    API for the Pinecone recipe management and meal planning system.
+
+    This API provides endpoints for managing recipes, meal plans, grocery lists,
+    and nutrition data for a single household.
+
+    ## Authentication
+    All endpoints except `/auth/register` and `/auth/login` require JWT authentication
+    via HTTP-only cookies.
+
+    ## Features
+    - User authentication with JWT tokens
+    - Recipe CRUD with nutrition data
+    - Meal planning calendar
+    - Grocery list generation
+    - Ingredient-based recipe recommendations
+    - Recipe collections (Cookbooks)
+  version: 1.0.0
+  contact:
+    name: BradenHooton
+    url: https://github.com/bradenhooton/pinecone-BTH
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development server
+  - url: https://pinecone.example.com/api/v1
+    description: Production server
+
+tags:
+  - name: Authentication
+    description: User authentication endpoints
+  - name: Recipes
+    description: Recipe management operations
+  - name: Nutrition
+    description: Nutrition data from USDA API
+  - name: Meal Plans
+    description: Meal planning calendar operations
+  - name: Grocery Lists
+    description: Grocery list generation and management
+  - name: Menu Recommendations
+    description: Ingredient-based recipe recommendations
+  - name: Cookbooks
+    description: Recipe collection management
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: jwt_token
+      description: JWT token stored in HTTP-only cookie
+
+  schemas:
+    # Authentication Schemas
+    User:
+      type: object
+      required:
+        - id
+        - email
+        - name
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: "123e4567-e89b-12d3-a456-426614174000"
+        email:
+          type: string
+          format: email
+          example: "user@example.com"
+        name:
+          type: string
+          example: "John Doe"
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    RegisterRequest:
+      type: object
+      required:
+        - email
+        - password
+        - name
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+        name:
+          type: string
+          maxLength: 100
+
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    # Recipe Schemas
+    Recipe:
+      type: object
+      required:
+        - id
+        - title
+        - servings
+        - serving_size
+        - created_by_user_id
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_by_user_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          maxLength: 200
+        image_url:
+          type: string
+          format: uri
+        servings:
+          type: integer
+          minimum: 1
+        serving_size:
+          type: string
+          maxLength: 100
+        prep_time_minutes:
+          type: integer
+          minimum: 0
+        cook_time_minutes:
+          type: integer
+          minimum: 0
+        total_time_minutes:
+          type: integer
+          readOnly: true
+        storage_notes:
+          type: string
+        source:
+          type: string
+          maxLength: 500
+        notes:
+          type: string
+        ingredients:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeIngredient'
+        instructions:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecipeInstruction'
+        tags:
+          type: array
+          items:
+            type: string
+            maxLength: 50
+        nutrition:
+          $ref: '#/components/schemas/NutritionInfo'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    RecipeIngredient:
+      type: object
+      required:
+        - ingredient_name
+        - quantity
+        - unit
+        - department
+      properties:
+        id:
+          type: string
+          format: uuid
+        ingredient_name:
+          type: string
+          maxLength: 200
+        quantity:
+          type: number
+          format: double
+          minimum: 0
+        unit:
+          type: string
+          maxLength: 50
+        department:
+          $ref: '#/components/schemas/GroceryDepartment'
+        nutrition_id:
+          type: string
+          format: uuid
+        order_index:
+          type: integer
+
+    RecipeInstruction:
+      type: object
+      required:
+        - step_number
+        - instruction
+      properties:
+        id:
+          type: string
+          format: uuid
+        step_number:
+          type: integer
+          minimum: 1
+        instruction:
+          type: string
+
+    # Nutrition Schemas
+    NutritionInfo:
+      type: object
+      properties:
+        calories:
+          type: number
+          format: double
+        protein_g:
+          type: number
+          format: double
+        carbs_g:
+          type: number
+          format: double
+        fiber_g:
+          type: number
+          format: double
+        fat_g:
+          type: number
+          format: double
+
+    # Meal Plan Schemas
+    MealPlan:
+      type: object
+      required:
+        - id
+        - plan_date
+      properties:
+        id:
+          type: string
+          format: uuid
+        plan_date:
+          type: string
+          format: date
+        meals:
+          type: object
+          properties:
+            breakfast:
+              type: array
+              items:
+                $ref: '#/components/schemas/MealPlanRecipe'
+            lunch:
+              type: array
+              items:
+                $ref: '#/components/schemas/MealPlanRecipe'
+            snack:
+              type: array
+              items:
+                $ref: '#/components/schemas/MealPlanRecipe'
+            dinner:
+              type: array
+              items:
+                $ref: '#/components/schemas/MealPlanRecipe'
+            dessert:
+              type: array
+              items:
+                $ref: '#/components/schemas/MealPlanRecipe'
+
+    MealPlanRecipe:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipe_id:
+          type: string
+          format: uuid
+        recipe:
+          $ref: '#/components/schemas/Recipe'
+        servings:
+          type: integer
+          minimum: 1
+        out_of_kitchen:
+          type: boolean
+        order_index:
+          type: integer
+
+    MealType:
+      type: string
+      enum:
+        - breakfast
+        - lunch
+        - snack
+        - dinner
+        - dessert
+
+    # Grocery List Schemas
+    GroceryList:
+      type: object
+      required:
+        - id
+        - start_date
+        - end_date
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_by_user_id:
+          type: string
+          format: uuid
+        start_date:
+          type: string
+          format: date
+        end_date:
+          type: string
+          format: date
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/GroceryListItem'
+        created_at:
+          type: string
+          format: date-time
+
+    GroceryListItem:
+      type: object
+      required:
+        - id
+        - item_name
+        - department
+      properties:
+        id:
+          type: string
+          format: uuid
+        item_name:
+          type: string
+          maxLength: 200
+        quantity:
+          type: number
+          format: double
+        unit:
+          type: string
+          maxLength: 50
+        department:
+          $ref: '#/components/schemas/GroceryDepartment'
+        status:
+          $ref: '#/components/schemas/GroceryItemStatus'
+        is_manual:
+          type: boolean
+        source_recipe_id:
+          type: string
+          format: uuid
+
+    GroceryDepartment:
+      type: string
+      enum:
+        - produce
+        - meat
+        - seafood
+        - dairy
+        - bakery
+        - frozen
+        - pantry
+        - spices
+        - beverages
+        - other
+
+    GroceryItemStatus:
+      type: string
+      enum:
+        - pending
+        - bought
+        - have_on_hand
+
+    # Cookbook Schemas
+    Cookbook:
+      type: object
+      required:
+        - id
+        - name
+        - created_by_user_id
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_by_user_id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+        recipes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Recipe'
+        created_at:
+          type: string
+          format: date-time
+
+    # Standard Response Schemas
+    SuccessResponse:
+      type: object
+      required:
+        - data
+        - meta
+      properties:
+        data:
+          type: object
+        meta:
+          type: object
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+            request_id:
+              type: string
+              format: uuid
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+        - meta
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+            message:
+              type: string
+            details:
+              type: array
+              items:
+                type: object
+        meta:
+          type: object
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+            request_id:
+              type: string
+              format: uuid
+
+  responses:
+    UnauthorizedError:
+      description: Authentication required
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFoundError:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+
+security:
+  - cookieAuth: []
+
+paths:
+  # Authentication Endpoints
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '201':
+          description: User created successfully
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          description: Email already exists
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login with credentials
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: jwt_token=abcde12345; Path=/; HttpOnly; Secure
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout current user
+      responses:
+        '204':
+          description: Logout successful
+
+  # Recipe Endpoints
+  /recipes:
+    get:
+      tags:
+        - Recipes
+      summary: List all recipes
+      parameters:
+        - name: search
+          in: query
+          description: Search query (title, ingredient, tag)
+          schema:
+            type: string
+        - name: tags
+          in: query
+          description: Filter by tags
+          schema:
+            type: array
+            items:
+              type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of recipes
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recipe'
+
+    post:
+      tags:
+        - Recipes
+      summary: Create a new recipe
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '201':
+          description: Recipe created
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Recipe'
+
+  /recipes/{id}:
+    get:
+      tags:
+        - Recipes
+      summary: Get recipe by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Recipe details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Recipe'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+    put:
+      tags:
+        - Recipes
+      summary: Update a recipe
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Recipe'
+      responses:
+        '200':
+          description: Recipe updated
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/SuccessResponse'
+                  - type: object
+                    properties:
+                      data:
+                        $ref: '#/components/schemas/Recipe'
+
+    delete:
+      tags:
+        - Recipes
+      summary: Delete a recipe (soft delete)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Recipe deleted
+
+  # Additional endpoints would be defined here for:
+  # - /nutrition/search
+  # - /meal-plans
+  # - /grocery-lists
+  # - /menu/recommend
+  # - /cookbooks
+  # (Templates provided - expand as needed during development)
+
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check endpoint
+      security: []
+      responses:
+        '200':
+          description: Service is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
