@@ -92,7 +92,7 @@ func main() {
 	cookbookService := cookbook.NewService(cookbookRepo)
 
 	// Initialize handlers
-	authHandler := auth.NewHandler(authService)
+	authHandler := auth.NewHandler(authService, cfg.SecureCookies)
 	recipeHandler := recipe.NewHandler(recipeService, cfg.UploadDir)
 	nutritionHandler := nutrition.NewHandler(nutritionService)
 	mealPlanHandler := mealplan.NewHandler(mealPlanService)

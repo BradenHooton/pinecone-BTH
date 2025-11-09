@@ -234,7 +234,7 @@ func (h *Handler) HandleUploadImage(w http.ResponseWriter, r *http.Request) {
 	// Generate unique filename
 	ext := filepath.Ext(header.Filename)
 	filename := fmt.Sprintf("%s%s", uuid.New().String(), ext)
-	filepath := filepath.Join(h.uploadDir, filename)
+	filePath := filepath.Join(h.uploadDir, filename)
 
 	// Create uploads directory if it doesn't exist
 	if err := os.MkdirAll(h.uploadDir, 0755); err != nil {
@@ -243,7 +243,7 @@ func (h *Handler) HandleUploadImage(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Save file
-	dst, err := os.Create(filepath)
+	dst, err := os.Create(filePath)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "Failed to save file")
 		return

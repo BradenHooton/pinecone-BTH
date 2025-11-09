@@ -36,8 +36,15 @@ func Auth(jwtSecret string) func(http.Handler) http.Handler {
 				return
 			}
 
+			// Parse user ID from string to UUID
+			userID, err := uuid.Parse(claims.UserID)
+			if err != nil {
+				respondWithError(w, http.StatusUnauthorized, "invalid user ID in token")
+				return
+			}
+
 			// Add user info to context
-			ctx := context.WithValue(r.Context(), UserIDKey, claims.UserID)
+			ctx := context.WithValue(r.Context(), UserIDKey, userID)
 			ctx = context.WithValue(ctx, UserEmailKey, claims.Email)
 
 			// Call next handler with updated context
@@ -48,14 +55,9 @@ func Auth(jwtSecret string) func(http.Handler) http.Handler {
 
 // GetUserIDFromContext extracts the user ID from the request context
 func GetUserIDFromContext(ctx context.Context) (uuid.UUID, error) {
-	userIDStr, ok := ctx.Value(UserIDKey).(string)
+	userID, ok := ctx.Value(UserIDKey).(uuid.UUID)
 	if !ok {
 		return uuid.Nil, fmt.Errorf("user ID not found in context")
-	}
-
-	userID, err := uuid.Parse(userIDStr)
-	if err != nil {
-		return uuid.Nil, fmt.Errorf("invalid UUID format: %w", err)
 	}
 
 	return userID, nil

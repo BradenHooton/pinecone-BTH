@@ -20,6 +20,7 @@ type Repository interface {
 
 	CreateGroceryListItem(ctx context.Context, item *models.GroceryListItem) (*models.GroceryListItem, error)
 	GetGroceryListItems(ctx context.Context, groceryListID uuid.UUID) ([]models.GroceryListItem, error)
+	GetItemOwnerUserID(ctx context.Context, itemID uuid.UUID) (uuid.UUID, error)
 	UpdateItemStatus(ctx context.Context, itemID uuid.UUID, status models.GroceryItemStatus) error
 	DeleteGroceryListItem(ctx context.Context, itemID uuid.UUID) error
 
@@ -224,6 +225,21 @@ func (r *PostgresRepository) GetGroceryListItems(ctx context.Context, groceryLis
 	}
 
 	return items, nil
+}
+
+// GetItemOwnerUserID gets the user ID who owns the grocery list containing this item
+func (r *PostgresRepository) GetItemOwnerUserID(ctx context.Context, itemID uuid.UUID) (uuid.UUID, error) {
+	var userID uuid.UUID
+	err := r.db.QueryRow(ctx, `
+		SELECT gl.created_by_user_id
+		FROM grocery_list_items gli
+		JOIN grocery_lists gl ON gli.grocery_list_id = gl.id
+		WHERE gli.id = $1
+	`, itemID).Scan(&userID)
+	if err != nil {
+		return uuid.Nil, fmt.Errorf("get item owner: %w", err)
+	}
+	return userID, nil
 }
 
 // UpdateItemStatus updates the status of a grocery list item

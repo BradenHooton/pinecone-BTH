@@ -48,7 +48,7 @@ func (m *MockService) GetUserByID(ctx context.Context, id uuid.UUID) (*models.Us
 func TestHandleRegister_Success(t *testing.T) {
 	// ARRANGE
 	mockService := new(MockService)
-	handler := NewHandler(mockService)
+	handler := NewHandler(mockService, false)
 
 	reqBody := &models.RegisterRequest{
 		Email:    "test@example.com",
@@ -100,7 +100,7 @@ func TestHandleRegister_Success(t *testing.T) {
 func TestHandleRegister_EmailAlreadyExists(t *testing.T) {
 	// ARRANGE
 	mockService := new(MockService)
-	handler := NewHandler(mockService)
+	handler := NewHandler(mockService, false)
 
 	reqBody := &models.RegisterRequest{
 		Email:    "existing@example.com",
@@ -136,7 +136,7 @@ func TestHandleRegister_EmailAlreadyExists(t *testing.T) {
 func TestHandleRegister_InvalidJSON(t *testing.T) {
 	// ARRANGE
 	mockService := new(MockService)
-	handler := NewHandler(mockService)
+	handler := NewHandler(mockService, false)
 
 	req := httptest.NewRequest(http.MethodPost, "/auth/register", bytes.NewBufferString("invalid json"))
 	req.Header.Set("Content-Type", "application/json")
@@ -154,7 +154,7 @@ func TestHandleRegister_InvalidJSON(t *testing.T) {
 func TestHandleLogin_Success(t *testing.T) {
 	// ARRANGE
 	mockService := new(MockService)
-	handler := NewHandler(mockService)
+	handler := NewHandler(mockService, false)
 
 	reqBody := &models.LoginRequest{
 		Email:    "test@example.com",
@@ -203,7 +203,7 @@ func TestHandleLogin_Success(t *testing.T) {
 func TestHandleLogin_InvalidCredentials(t *testing.T) {
 	// ARRANGE
 	mockService := new(MockService)
-	handler := NewHandler(mockService)
+	handler := NewHandler(mockService, false)
 
 	reqBody := &models.LoginRequest{
 		Email:    "test@example.com",
@@ -237,7 +237,7 @@ func TestHandleLogin_InvalidCredentials(t *testing.T) {
 // TestHandleLogout_Success tests successful logout
 func TestHandleLogout_Success(t *testing.T) {
 	// ARRANGE
-	handler := NewHandler(nil) // No service needed for logout
+	handler := NewHandler(nil, false) // No service needed for logout
 
 	req := httptest.NewRequest(http.MethodPost, "/auth/logout", nil)
 	rr := httptest.NewRecorder()

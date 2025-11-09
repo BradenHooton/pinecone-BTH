@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/BradenHooton/pinecone-api/internal/middleware"
 	"github.com/BradenHooton/pinecone-api/internal/models"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -24,7 +25,7 @@ func NewHandler(service *Service) *Handler {
 // HandleCreate handles POST /api/v1/cookbooks
 func (h *Handler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from context (set by auth middleware)
-	userID, ok := r.Context().Value("user_id").(uuid.UUID)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uuid.UUID)
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "Unauthorized")
 		return
@@ -52,7 +53,7 @@ func (h *Handler) HandleCreate(w http.ResponseWriter, r *http.Request) {
 // HandleList handles GET /api/v1/cookbooks
 func (h *Handler) HandleList(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from context
-	userID, ok := r.Context().Value("user_id").(uuid.UUID)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uuid.UUID)
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "Unauthorized")
 		return
@@ -91,7 +92,7 @@ func (h *Handler) HandleList(w http.ResponseWriter, r *http.Request) {
 // HandleGetByID handles GET /api/v1/cookbooks/{id}
 func (h *Handler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from context
-	userID, ok := r.Context().Value("user_id").(uuid.UUID)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uuid.UUID)
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "Unauthorized")
 		return
@@ -125,7 +126,7 @@ func (h *Handler) HandleGetByID(w http.ResponseWriter, r *http.Request) {
 // HandleUpdate handles PUT /api/v1/cookbooks/{id}
 func (h *Handler) HandleUpdate(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from context
-	userID, ok := r.Context().Value("user_id").(uuid.UUID)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uuid.UUID)
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "Unauthorized")
 		return
@@ -169,7 +170,7 @@ func (h *Handler) HandleUpdate(w http.ResponseWriter, r *http.Request) {
 // HandleDelete handles DELETE /api/v1/cookbooks/{id}
 func (h *Handler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from context
-	userID, ok := r.Context().Value("user_id").(uuid.UUID)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uuid.UUID)
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "Unauthorized")
 		return
@@ -202,7 +203,7 @@ func (h *Handler) HandleDelete(w http.ResponseWriter, r *http.Request) {
 // HandleAddRecipe handles POST /api/v1/cookbooks/{cookbook_id}/recipes/{recipe_id}
 func (h *Handler) HandleAddRecipe(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from context
-	userID, ok := r.Context().Value("user_id").(uuid.UUID)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uuid.UUID)
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "Unauthorized")
 		return
@@ -242,7 +243,7 @@ func (h *Handler) HandleAddRecipe(w http.ResponseWriter, r *http.Request) {
 // HandleRemoveRecipe handles DELETE /api/v1/cookbooks/{cookbook_id}/recipes/{recipe_id}
 func (h *Handler) HandleRemoveRecipe(w http.ResponseWriter, r *http.Request) {
 	// Get user ID from context
-	userID, ok := r.Context().Value("user_id").(uuid.UUID)
+	userID, ok := r.Context().Value(middleware.UserIDKey).(uuid.UUID)
 	if !ok {
 		writeError(w, http.StatusUnauthorized, "Unauthorized")
 		return

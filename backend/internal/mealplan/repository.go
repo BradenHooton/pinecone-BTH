@@ -163,8 +163,7 @@ func (r *PostgresRepository) UpdateMealPlan(ctx context.Context, date time.Time,
 	for i := range mealPlan.Meals {
 		if mealPlan.Meals[i].RecipeID != nil {
 			if err := r.loadRecipe(ctx, &mealPlan.Meals[i]); err != nil {
-				// Log error but don't fail - recipe might have been deleted
-				fmt.Printf("failed to load recipe: %v\n", err)
+				// Silently ignore - recipe might have been deleted
 			}
 		}
 	}
@@ -194,8 +193,7 @@ func (r *PostgresRepository) loadMeals(ctx context.Context, mealPlan *models.Mea
 		// Load recipe data if recipe_id is present
 		if mpr.RecipeID != nil {
 			if err := r.loadRecipe(ctx, &mpr); err != nil {
-				// Log error but don't fail - recipe might have been deleted
-				fmt.Printf("failed to load recipe: %v\n", err)
+				// Silently ignore - recipe might have been deleted
 			}
 		}
 

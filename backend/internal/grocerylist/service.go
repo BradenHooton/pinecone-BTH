@@ -166,9 +166,15 @@ func (s *Service) AddManualItem(ctx context.Context, userID, groceryListID uuid.
 
 // UpdateItemStatus updates the status of a grocery list item
 func (s *Service) UpdateItemStatus(ctx context.Context, userID, itemID uuid.UUID, req *models.UpdateItemStatusRequest) error {
-	// Note: We should verify the item belongs to a list owned by the user
-	// For simplicity, we'll just update the status
-	// In production, add a query to verify ownership
+	// Verify the item belongs to a list owned by the user
+	ownerID, err := s.repo.GetItemOwnerUserID(ctx, itemID)
+	if err != nil {
+		return ErrNotFound
+	}
+
+	if ownerID != userID {
+		return ErrUnauthorized
+	}
 
 	return s.repo.UpdateItemStatus(ctx, itemID, req.Status)
 }

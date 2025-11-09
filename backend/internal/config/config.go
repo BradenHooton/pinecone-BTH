@@ -16,6 +16,7 @@ type Config struct {
 	// JWT
 	JWTSecret      string
 	JWTExpiryHours int
+	SecureCookies  bool
 
 	// USDA API
 	USDAAPIKey     string
@@ -66,6 +67,9 @@ func Load() (*Config, error) {
 		return nil, fmt.Errorf("invalid MAX_UPLOAD_SIZE_MB: %w", err)
 	}
 
+	// Parse boolean values
+	cfg.SecureCookies, _ = strconv.ParseBool(getEnvWithDefault("SECURE_COOKIES", "false"))
+
 	// Validate configuration
 	if err := cfg.Validate(); err != nil {
 		return nil, err
@@ -82,6 +86,10 @@ func (c *Config) Validate() error {
 
 	if c.JWTSecret == "" {
 		return fmt.Errorf("JWT_SECRET is required")
+	}
+
+	if len(c.JWTSecret) < 32 {
+		return fmt.Errorf("JWT_SECRET must be at least 32 characters for security")
 	}
 
 	if c.JWTExpiryHours <= 0 {

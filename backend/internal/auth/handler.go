@@ -19,12 +19,16 @@ type ServiceInterface interface {
 
 // Handler handles HTTP requests for authentication
 type Handler struct {
-	service ServiceInterface
+	service       ServiceInterface
+	secureCookies bool
 }
 
 // NewHandler creates a new auth handler
-func NewHandler(service ServiceInterface) *Handler {
-	return &Handler{service: service}
+func NewHandler(service ServiceInterface, secureCookies bool) *Handler {
+	return &Handler{
+		service:       service,
+		secureCookies: secureCookies,
+	}
 }
 
 // HandleRegister handles user registration
@@ -49,7 +53,7 @@ func (h *Handler) HandleRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set JWT cookie
-	setJWTCookie(w, token)
+	h.setJWTCookie(w, token)
 
 	// Return user data
 	respondWithJSON(w, http.StatusCreated, map[string]interface{}{
@@ -77,7 +81,7 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Set JWT cookie
-	setJWTCookie(w, token)
+	h.setJWTCookie(w, token)
 
 	// Return user data
 	respondWithJSON(w, http.StatusOK, map[string]interface{}{
@@ -88,7 +92,7 @@ func (h *Handler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 // HandleLogout handles user logout
 func (h *Handler) HandleLogout(w http.ResponseWriter, r *http.Request) {
 	// Clear JWT cookie
-	clearJWTCookie(w)
+	h.clearJWTCookie(w)
 
 	respondWithJSON(w, http.StatusOK, map[string]interface{}{
 		"message": "Logged out successfully",
@@ -96,28 +100,28 @@ func (h *Handler) HandleLogout(w http.ResponseWriter, r *http.Request) {
 }
 
 // setJWTCookie sets the JWT token in an HTTP-only cookie
-func setJWTCookie(w http.ResponseWriter, token string) {
+func (h *Handler) setJWTCookie(w http.ResponseWriter, token string) {
 	cookie := &http.Cookie{
 		Name:     "jwt_token",
 		Value:    token,
 		Path:     "/",
 		MaxAge:   24 * 60 * 60, // 24 hours
 		HttpOnly: true,
-		Secure:   false, // Set to true in production with HTTPS
+		Secure:   h.secureCookies, // Configurable based on environment
 		SameSite: http.SameSiteStrictMode,
 	}
 	http.SetCookie(w, cookie)
 }
 
 // clearJWTCookie clears the JWT token cookie
-func clearJWTCookie(w http.ResponseWriter) {
+func (h *Handler) clearJWTCookie(w http.ResponseWriter) {
 	cookie := &http.Cookie{
 		Name:     "jwt_token",
 		Value:    "",
 		Path:     "/",
 		MaxAge:   -1,
 		HttpOnly: true,
-		Secure:   false,
+		Secure:   h.secureCookies, // Configurable based on environment
 		SameSite: http.SameSiteStrictMode,
 	}
 	http.SetCookie(w, cookie)
