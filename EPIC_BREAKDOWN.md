@@ -2,7 +2,7 @@
 ## Pinecone Recipe Management System
 
 **Version:** 1.0  
-**Date:** 2025-11-08  
+**Date:** 2025-11-09  
 **Total Estimated Effort:** 422 hours (~10.5 weeks)
 
 ---
@@ -39,7 +39,7 @@
 
 **Tasks:**
 1. Create GitHub repositories (3x)
-2. Initialize Go module: `go mod init github.com/bhooton/pinecone-api`
+2. Initialize Go module: `go mod init github.com/bradenhooton/pinecone-api`
 3. Initialize Vite project: `npm create vite@latest pinecone-web -- --template react-ts`
 4. Create directory structures per TDD
 5. Add `.gitignore` files
@@ -1089,4 +1089,4 @@
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | 2025-11-08 | GhostDev | Initial epic breakdown |
+| 1.0 | 2025-11-09 | GhostDev | Initial epic breakdown |

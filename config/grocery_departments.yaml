@@ -1,0 +1,273 @@
+# Grocery Department Configuration
+# Pinecone Recipe Management System
+#
+# This file defines the grocery store departments used to organize
+# ingredients in grocery lists. The order field determines the display
+# order in the UI (lower numbers appear first).
+#
+# These departments map to the grocery_department ENUM in PostgreSQL.
+
+version: "1.0"
+last_updated: "2025-11-09"
+
+departments:
+  - id: produce
+    name: "Produce"
+    description: "Fresh fruits and vegetables"
+    order: 1
+    icon: "🥬"
+    color: "#4CAF50"
+    examples:
+      - "Lettuce"
+      - "Tomatoes"
+      - "Apples"
+      - "Carrots"
+      - "Onions"
+
+  - id: meat
+    name: "Meat & Poultry"
+    description: "Fresh and packaged meats, poultry"
+    order: 2
+    icon: "🥩"
+    color: "#D32F2F"
+    examples:
+      - "Chicken breast"
+      - "Ground beef"
+      - "Pork chops"
+      - "Turkey"
+      - "Bacon"
+
+  - id: seafood
+    name: "Seafood"
+    description: "Fresh and frozen seafood, fish"
+    order: 3
+    icon: "🐟"
+    color: "#2196F3"
+    examples:
+      - "Salmon"
+      - "Shrimp"
+      - "Tuna"
+      - "Cod"
+      - "Crab"
+
+  - id: dairy
+    name: "Dairy & Eggs"
+    description: "Milk, cheese, yogurt, eggs, butter"
+    order: 4
+    icon: "🥛"
+    color: "#FFC107"
+    examples:
+      - "Milk"
+      - "Cheddar cheese"
+      - "Eggs"
+      - "Butter"
+      - "Yogurt"
+      - "Sour cream"
+
+  - id: bakery
+    name: "Bakery"
+    description: "Bread, buns, pastries, fresh baked goods"
+    order: 5
+    icon: "🍞"
+    color: "#FF9800"
+    examples:
+      - "Bread"
+      - "Hamburger buns"
+      - "Croissants"
+      - "Bagels"
+      - "Tortillas"
+
+  - id: frozen
+    name: "Frozen Foods"
+    description: "Frozen meals, vegetables, desserts, ice cream"
+    order: 6
+    icon: "❄️"
+    color: "#03A9F4"
+    examples:
+      - "Frozen peas"
+      - "Ice cream"
+      - "Frozen pizza"
+      - "Frozen berries"
+      - "Fish sticks"
+
+  - id: pantry
+    name: "Pantry & Dry Goods"
+    description: "Pasta, rice, canned goods, cereal, baking supplies"
+    order: 7
+    icon: "🥫"
+    color: "#795548"
+    examples:
+      - "Pasta"
+      - "Rice"
+      - "Canned tomatoes"
+      - "Flour"
+      - "Sugar"
+      - "Cereal"
+      - "Oats"
+      - "Beans"
+
+  - id: spices
+    name: "Spices & Condiments"
+    description: "Herbs, spices, sauces, condiments, oils, vinegars"
+    order: 8
+    icon: "🌶️"
+    color: "#F44336"
+    examples:
+      - "Black pepper"
+      - "Garlic powder"
+      - "Olive oil"
+      - "Soy sauce"
+      - "Ketchup"
+      - "Mustard"
+      - "Basil"
+      - "Oregano"
+
+  - id: beverages
+    name: "Beverages"
+    description: "Drinks, juices, coffee, tea, soda, water"
+    order: 9
+    icon: "🥤"
+    color: "#9C27B0"
+    examples:
+      - "Coffee"
+      - "Orange juice"
+      - "Tea"
+      - "Soda"
+      - "Bottled water"
+      - "Wine"
+      - "Beer"
+
+  - id: other
+    name: "Other"
+    description: "Miscellaneous items that don't fit other categories"
+    order: 10
+    icon: "📦"
+    color: "#607D8B"
+    examples:
+      - "Paper towels"
+      - "Aluminum foil"
+      - "Trash bags"
+      - "Cleaning supplies"
+      - "Pet food"
+
+# Mapping suggestions for common ingredients
+# This helps the system auto-assign departments to ingredients
+ingredient_mapping:
+  produce:
+    - "lettuce"
+    - "tomato"
+    - "onion"
+    - "garlic"
+    - "potato"
+    - "carrot"
+    - "celery"
+    - "bell pepper"
+    - "cucumber"
+    - "spinach"
+    - "broccoli"
+    - "cauliflower"
+    - "mushroom"
+    - "avocado"
+    - "lemon"
+    - "lime"
+    - "apple"
+    - "banana"
+    - "orange"
+
+  meat:
+    - "chicken"
+    - "beef"
+    - "pork"
+    - "turkey"
+    - "bacon"
+    - "sausage"
+    - "ham"
+    - "steak"
+    - "ground beef"
+    - "ground turkey"
+
+  seafood:
+    - "salmon"
+    - "tuna"
+    - "shrimp"
+    - "cod"
+    - "tilapia"
+    - "crab"
+    - "lobster"
+    - "clams"
+
+  dairy:
+    - "milk"
+    - "cheese"
+    - "butter"
+    - "yogurt"
+    - "cream"
+    - "sour cream"
+    - "cream cheese"
+    - "cottage cheese"
+    - "eggs"
+    - "parmesan"
+    - "mozzarella"
+    - "cheddar"
+
+  bakery:
+    - "bread"
+    - "buns"
+    - "rolls"
+    - "bagels"
+    - "croissants"
+    - "tortillas"
+    - "pita"
+    - "english muffin"
+
+  frozen:
+    - "frozen peas"
+    - "frozen corn"
+    - "frozen broccoli"
+    - "ice cream"
+    - "frozen pizza"
+    - "frozen berries"
+
+  pantry:
+    - "pasta"
+    - "rice"
+    - "flour"
+    - "sugar"
+    - "beans"
+    - "lentils"
+    - "quinoa"
+    - "oats"
+    - "cereal"
+    - "crackers"
+    - "chips"
+    - "peanut butter"
+    - "jam"
+    - "honey"
+
+  spices:
+    - "salt"
+    - "pepper"
+    - "garlic powder"
+    - "onion powder"
+    - "paprika"
+    - "cumin"
+    - "oregano"
+    - "basil"
+    - "thyme"
+    - "rosemary"
+    - "cinnamon"
+    - "olive oil"
+    - "vegetable oil"
+    - "vinegar"
+    - "soy sauce"
+    - "worcestershire sauce"
+
+  beverages:
+    - "coffee"
+    - "tea"
+    - "juice"
+    - "soda"
+    - "water"
+    - "wine"
+    - "beer"
+    - "milk"  # Can also be dairy

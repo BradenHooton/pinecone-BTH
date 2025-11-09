@@ -2,7 +2,7 @@
 ## Pinecone Recipe Management System
 
 **Version:** 1.0  
-**Date:** 2025-11-08  
+**Date:** 2025-11-09  
 **Target Environment:** Production (VPS)
 
 ---
@@ -142,10 +142,10 @@ mkdir -p uploads backups logs config
 cd /var/www/pinecone
 
 # Clone backend
-git clone https://github.com/bhooton/pinecone-api.git
+git clone https://github.com/bradenhooton/pinecone-api.git
 
 # Clone frontend
-git clone https://github.com/bhooton/pinecone-web.git
+git clone https://github.com/bradenhooton/pinecone-web.git
 ```
 
 ### Step 2: Configure Environment Variables
@@ -228,7 +228,7 @@ services:
       - pinecone_network
 
   api:
-    image: ghcr.io/bhooton/pinecone-api:latest
+    image: ghcr.io/bradenhooton/pinecone-api:latest
     container_name: pinecone_api
     env_file:
       - .env.prod
@@ -415,8 +415,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/bhooton/pinecone-api:latest
-            ghcr.io/bhooton/pinecone-api:${{ github.sha }}
+            ghcr.io/bradenhooton/pinecone-api:latest
+            ghcr.io/bradenhooton/pinecone-api:${{ github.sha }}
 
       - name: Deploy to server
         uses: appleboy/ssh-action@v1.0.0
@@ -560,7 +560,7 @@ docker-compose -f docker-compose.prod.yml logs api | grep -i error
 curl https://pinecone.example.com/api/v1/health
 
 # Expected response:
-# {"status": "ok", "timestamp": "2025-11-08T12:00:00Z"}
+# {"status": "ok", "timestamp": "2025-11-09T12:00:00Z"}
 
 # Database health
 docker exec pinecone_db pg_isready -U pinecone_prod
@@ -662,7 +662,7 @@ cd /var/www/pinecone/pinecone-api
 
 # Revert to previous image
 docker-compose -f docker-compose.prod.yml down
-docker pull ghcr.io/bhooton/pinecone-api:<PREVIOUS_TAG>
+docker pull ghcr.io/bradenhooton/pinecone-api:<PREVIOUS_TAG>
 docker-compose -f docker-compose.prod.yml up -d
 
 # Or checkout previous Git commit

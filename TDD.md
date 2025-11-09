@@ -2,7 +2,7 @@
 ## Pinecone Recipe Management & Meal Planning System
 
 **Version:** 1.0  
-**Date:** 2025-11-08  
+**Date:** 2025-11-09  
 **Status:** Approved  
 **Author:** GhostDev
 
@@ -370,7 +370,7 @@ CREATE INDEX idx_nutrition_cache_food_name ON nutrition_cache(food_name);
 {
   "data": { ... },
   "meta": {
-    "timestamp": "2025-11-08T12:00:00Z",
+    "timestamp": "2025-11-09T12:00:00Z",
     "request_id": "uuid"
   }
 }
@@ -385,7 +385,7 @@ CREATE INDEX idx_nutrition_cache_food_name ON nutrition_cache(food_name);
     "details": [...]
   },
   "meta": {
-    "timestamp": "2025-11-08T12:00:00Z",
+    "timestamp": "2025-11-09T12:00:00Z",
     "request_id": "uuid"
   }
 }
@@ -636,7 +636,7 @@ services:
       retries: 5
 
   api:
-    image: ghcr.io/bhooton/pinecone-api:latest
+    image: ghcr.io/bradenhooton/pinecone-api:latest
     environment:
       DATABASE_URL: postgres://${DB_USER}:${DB_PASSWORD}@db:5432/pinecone
       JWT_SECRET: ${JWT_SECRET}
@@ -733,4 +733,4 @@ export const spacing = {
 
 | Version | Date | Author | Changes |
 |---------|------|--------|---------|
-| 1.0 | 2025-11-08 | GhostDev | Initial TDD creation and approval |
+| 1.0 | 2025-11-09 | GhostDev | Initial TDD creation and approval |

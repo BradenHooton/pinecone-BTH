@@ -2,7 +2,7 @@
 ## Pinecone Recipe Management System
 
 **Version:** 1.0  
-**Date:** 2025-11-08
+**Date:** 2025-11-09
 
 ---
 
@@ -79,8 +79,8 @@ mkdir ~/pinecone-project
 cd ~/pinecone-project
 
 # Clone repositories
-git clone https://github.com/bhooton/pinecone-api.git
-git clone https://github.com/bhooton/pinecone-web.git
+git clone https://github.com/bradenhooton/pinecone-api.git
+git clone https://github.com/bradenhooton/pinecone-web.git
 ```
 
 ### Step 2: Backend Setup

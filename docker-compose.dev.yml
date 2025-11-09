@@ -1,0 +1,135 @@
+# Pinecone Recipe Management System
+# Docker Compose - Development Environment
+#
+# This file sets up local development services.
+# For production deployment, see DEPLOYMENT_GUIDE.md
+#
+# Usage:
+#   docker-compose -f docker-compose.dev.yml up -d
+#   docker-compose -f docker-compose.dev.yml down
+#   docker-compose -f docker-compose.dev.yml logs -f
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: pinecone_db_dev
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-pinecone_dev}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      # Persistent data storage
+      - postgres_dev_data:/var/lib/postgresql/data
+      # Initialization scripts (optional)
+      # - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    networks:
+      - pinecone_dev_network
+
+  # pgAdmin - Database Management UI (Optional)
+  # Uncomment to enable web-based PostgreSQL administration
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   container_name: pinecone_pgadmin_dev
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@pinecone.local}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+  #     PGADMIN_CONFIG_SERVER_MODE: 'False'
+  #   ports:
+  #     - "5050:80"
+  #   volumes:
+  #     - pgadmin_dev_data:/var/lib/pgadmin
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - pinecone_dev_network
+
+  # Redis - Caching Layer (Optional - for future use)
+  # Uncomment when implementing caching features
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: pinecone_redis_dev
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - redis_dev_data:/data
+  #   command: redis-server --appendonly yes
+  #   healthcheck:
+  #     test: ["CMD", "redis-cli", "ping"]
+  #     interval: 10s
+  #     timeout: 3s
+  #     retries: 5
+  #   restart: unless-stopped
+  #   networks:
+  #     - pinecone_dev_network
+
+  # Mailhog - Email Testing (Optional)
+  # Uncomment to capture outgoing emails during development
+  # mailhog:
+  #   image: mailhog/mailhog:latest
+  #   container_name: pinecone_mailhog_dev
+  #   ports:
+  #     - "1025:1025"  # SMTP server
+  #     - "8025:8025"  # Web UI
+  #   networks:
+  #     - pinecone_dev_network
+
+volumes:
+  # PostgreSQL data volume
+  postgres_dev_data:
+    driver: local
+
+  # pgAdmin data volume
+  # pgadmin_dev_data:
+  #   driver: local
+
+  # Redis data volume
+  # redis_dev_data:
+  #   driver: local
+
+networks:
+  pinecone_dev_network:
+    driver: bridge
+    name: pinecone_dev
+
+# ============================================
+# Quick Reference Commands
+# ============================================
+#
+# Start services:
+#   docker-compose -f docker-compose.dev.yml up -d
+#
+# Stop services:
+#   docker-compose -f docker-compose.dev.yml down
+#
+# View logs:
+#   docker-compose -f docker-compose.dev.yml logs -f
+#   docker-compose -f docker-compose.dev.yml logs -f db
+#
+# Execute psql:
+#   docker-compose -f docker-compose.dev.yml exec db psql -U postgres -d pinecone_dev
+#
+# Run migrations (from pinecone-api directory):
+#   goose -dir internal/store/migrations postgres "postgres://postgres:postgres@localhost:5432/pinecone_dev?sslmode=disable" up
+#
+# Reset database (WARNING: Deletes all data):
+#   docker-compose -f docker-compose.dev.yml down -v
+#   docker-compose -f docker-compose.dev.yml up -d
+#
+# Check container status:
+#   docker-compose -f docker-compose.dev.yml ps
+#
+# View resource usage:
+#   docker stats pinecone_db_dev

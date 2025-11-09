@@ -1,0 +1,210 @@
+# Pinecone Project - Git Ignore File
+# Generated: 2025-11-09
+
+# ============================================
+# Environment and Secrets (CRITICAL - NEVER COMMIT)
+# ============================================
+.env
+.env.dev
+.env.prod
+.env.local
+.env.staging
+.env.*.local
+*.pem
+*.key
+*.crt
+secrets/
+credentials/
+
+# ============================================
+# Dependencies
+# ============================================
+# Go
+vendor/
+go.sum.lock
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-store/
+package-lock.json.backup
+
+# ============================================
+# Build Outputs
+# ============================================
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/bin/
+/pkg/
+/dist/
+build/
+
+# Frontend
+dist/
+build/
+.vite/
+.next/
+.nuxt/
+out/
+
+# ============================================
+# Application Data
+# ============================================
+uploads/
+backups/
+*.sql
+*.sql.gz
+*.dump
+*.backup
+data/
+storage/
+
+# ============================================
+# Logs
+# ============================================
+*.log
+logs/
+log/
+*.log.*
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# ============================================
+# Testing
+# ============================================
+coverage/
+coverage.out
+coverage.html
+.coverage
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+testdata/
+test-results/
+playwright-report/
+
+# ============================================
+# IDE and Editors
+# ============================================
+# VS Code
+.vscode/
+*.code-workspace
+
+# JetBrains (GoLand, WebStorm, IntelliJ)
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim
+*.swp
+*.swo
+*~
+.*.sw?
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# ============================================
+# Operating System
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# Database
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+postgres_data/
+mysql_data/
+
+# ============================================
+# Docker
+# ============================================
+docker-compose.override.yml
+.dockerignore.local
+
+# ============================================
+# Temporary Files
+# ============================================
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+.cache/
+
+# ============================================
+# Generated Files
+# ============================================
+# sqlc generated files (version controlled, but listed for reference)
+# internal/store/queries/*.sql.go
+
+# API generated types
+# src/lib/api-types.ts
+
+# ============================================
+# Development Tools
+# ============================================
+.air.toml
+.env.test
+.tool-versions
+.envrc
+
+# ============================================
+# Documentation (Keep only source files)
+# ============================================
+# API documentation outputs (if generated)
+api/docs/
+docs/build/
+
+# ============================================
+# Miscellaneous
+# ============================================
+.history/
+.scannerwork/
+*.bak
+*.gho
+*.ori
+*.orig
+*.rej
+.*.kate-swp
+.swp.*
